@@ -11,8 +11,16 @@ import com.goncalves.service.RoundUpCalculator;
  * This class represents the RoundUpApplication which is responsible for calculating the total round-up amount from
  * transactions, creating a savings goal, and transferring the round-up amount to the savings goal.
  */
+
+
 public class RoundUpApplication {
 
+    /**
+    * Main method to run the RoundUpApplication.
+    *
+    * @param args command line arguments
+    * @throws IOException if an I/O error occurs
+    */
     public static void main(String[] args) throws IOException {
         // Create a scanner to read user input
         Scanner scanner = new Scanner(System.in);

@@ -1,6 +1,4 @@
-
 package com.goncalves.api;
-
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -21,20 +19,35 @@ import java.util.UUID;
  * transactions between specific timestamps, checking savings goals, creating savings goals, and adding money to savings goals.
  * This class requires an access token to authenticate with the Starling Bank API. The access token should be provided when constructing an instance of `StarlingClient`.
  */
+
 public class StarlingClient {
 
     private final String baseUrl = "https://api-sandbox.starlingbank.com";
     private final CloseableHttpClient httpClient;
     private final String accessToken;
 
+    /**
+     * Constructs a new StarlingClient object with the specified access token.
+     *
+     * @param accessToken the access token used for authentication
+     */
     public StarlingClient(String accessToken) {
         this.accessToken = accessToken;
         this.httpClient = HttpClients.createDefault();
     }
 
+    /**
+     * Sends an HTTP request with the specified request object and returns the response body as a string.
+     * Sets the necessary headers for authentication and content type.
+     * Throws a RuntimeException if the response status code is not 200.
+     *
+     * @param request the HTTP request object
+     * @return the response body as a string
+     * @throws IOException if an I/O error occurs while sending the request
+     */
     private String sendRequest(HttpUriRequest request) throws IOException {
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        request.setHeader(HttpHeaders.ACCEPT, "application/json"); //
+        request.setHeader(HttpHeaders.ACCEPT, "application/json");
 
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             int statusCode = response.getStatusLine().getStatusCode();
@@ -51,28 +64,58 @@ public class StarlingClient {
 
     // Endpoints
 
-    // Method to get account details
+    /**
+     * Retrieves the account details for the authenticated user.
+     *
+     * @return the account details as a string
+     * @throws IOException if an I/O error occurs while sending the request
+     */
     public String getAccountDetails() throws IOException {
         HttpGet request = new HttpGet(baseUrl + "/api/v2/accounts");
         return sendRequest(request);
     }
 
-    // Method to get transactions between specific timestamps
+    /**
+     * Retrieves the transactions between the specified timestamps for the given account and category.
+     *
+     * @param accountUid              the account UID
+     * @param categoryUid             the category UID
+     * @param minTransactionTimestamp the minimum transaction timestamp
+     * @param maxTransactionTimestamp the maximum transaction timestamp
+     * @return the transactions as a string
+     * @throws IOException if an I/O error occurs while sending the request
+     */
     public String getTransactionsBetween(String accountUid, String categoryUid, String minTransactionTimestamp, String maxTransactionTimestamp) throws IOException {
         String url = baseUrl + "/api/v2/feed/account/" + accountUid + "/category/" + categoryUid
-                    + "/transactions-between?minTransactionTimestamp=" + minTransactionTimestamp
-                    + "&maxTransactionTimestamp=" + maxTransactionTimestamp;
+                + "/transactions-between?minTransactionTimestamp=" + minTransactionTimestamp
+                + "&maxTransactionTimestamp=" + maxTransactionTimestamp;
 
         HttpGet request = new HttpGet(url);
         return sendRequest(request);
     }
 
-    // Method to check if a savings goal already exists
+    /**
+     * Retrieves the savings goals for the specified account.
+     *
+     * @param accountUid the account UID
+     * @return the savings goals as a string
+     * @throws IOException if an I/O error occurs while sending the request
+     */
     public String getSavingsGoals(String accountUid) throws IOException {
         HttpGet request = new HttpGet(baseUrl + "/api/v2/account/" + accountUid + "/savings-goals");
         return sendRequest(request);
     }
-    // Method to create a savings goal
+
+    /**
+     * Creates a new savings goal for the specified account with the given name, currency, and target amount.
+     *
+     * @param accountUid        the account UID
+     * @param name              the name of the savings goal
+     * @param currency          the currency of the savings goal
+     * @param targetMinorUnits  the target amount in minor units
+     * @return the created savings goal as a JSONObject
+     * @throws IOException if an I/O error occurs while sending the request
+     */
     public JSONObject createSavingsGoal(String accountUid, String name, String currency, int targetMinorUnits) throws IOException {
         HttpPut request = new HttpPut(baseUrl + "/api/v2/account/" + accountUid + "/savings-goals");
         JSONObject target = new JSONObject();
@@ -84,7 +127,6 @@ public class StarlingClient {
         savingsGoalRequest.put("currency", currency);
         savingsGoalRequest.put("target", target);
 
-
         StringEntity entity = new StringEntity(savingsGoalRequest.toString());
         request.setEntity(entity);
         request.setHeader("Content-Type", "application/json");
@@ -92,7 +134,16 @@ public class StarlingClient {
         String response = sendRequest(request);
         return new JSONObject(response);
     }
-    // Method to add money to a savings goal
+
+    /**
+     * Adds money to the specified savings goal for the given account.
+     *
+     * @param accountUid       the account UID
+     * @param savingsGoalUid   the savings goal UID
+     * @param amount           the amount to add in minor units
+     * @param currency         the currency of the amount
+     * @throws IOException if an I/O error occurs while sending the request
+     */
     public void addMoneyToSavingsGoal(String accountUid, String savingsGoalUid, int amount, String currency) throws IOException {
         UUID transferUid = UUID.randomUUID(); // Generate a unique transfer ID
         HttpPut request = new HttpPut(baseUrl + "/api/v2/account/" + accountUid + "/savings-goals/" + savingsGoalUid + "/add-money/" + transferUid);
