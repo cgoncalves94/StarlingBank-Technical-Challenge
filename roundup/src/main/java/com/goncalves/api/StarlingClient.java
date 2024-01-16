@@ -51,39 +51,39 @@ public class StarlingClient {
      * @return the response body as a string
      * @throws IOException if an I/O error occurs while sending the request
      */
-private String sendRequest(HttpUriRequest request) throws IOException, ApiException {
-    request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-    request.setHeader(HttpHeaders.ACCEPT, "application/json");
+    private String sendRequest(HttpUriRequest request) throws IOException, ApiException {
+        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        request.setHeader(HttpHeaders.ACCEPT, "application/json");
 
-    try (CloseableHttpResponse response = httpClient.execute(request)) {
-        int statusCode = response.getStatusLine().getStatusCode();
-        String responseBody = EntityUtils.toString(response.getEntity());
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            String responseBody = EntityUtils.toString(response.getEntity());
 
-        if (statusCode == 200) {
-            return responseBody;
-        } else {
-            // Parse the error response based on the expected JSON structure
-            if (responseBody.contains("\"errors\"")) {
-                // Handle the JSON structure with an "errors" array
-                JSONObject jsonResponse = new JSONObject(responseBody);
-                JSONArray errors = jsonResponse.optJSONArray("errors");
-                if (errors != null && errors.length() > 0) {
-                    JSONObject firstError = errors.getJSONObject(0);
-                    String message = firstError.optString("message", "No message provided");
-                    throw new ApiException(statusCode, "Error response received", message);
-                } else {
-                    throw new ApiException(statusCode, "Unknown error", "No error information provided");
-                }
+            if (statusCode == 200) {
+                return responseBody;
             } else {
-                // Handle the regular JSON structure with "error" and "error_description"
-                JSONObject jsonResponse = new JSONObject(responseBody);
-                String error = jsonResponse.optString("error", "Unknown error");
-                String errorDescription = jsonResponse.optString("error_description", "No description provided");
-                throw new ApiException(statusCode, error, errorDescription);
+                // Parse the error response based on the expected JSON structure
+                if (responseBody.contains("\"errors\"")) {
+                    // Handle the JSON structure with an "errors" array
+                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    JSONArray errors = jsonResponse.optJSONArray("errors");
+                    if (errors != null && errors.length() > 0) {
+                        JSONObject firstError = errors.getJSONObject(0);
+                        String message = firstError.optString("message", "No message provided");
+                        throw new ApiException(statusCode, "Error response received", message);
+                    } else {
+                        throw new ApiException(statusCode, "Unknown error", "No error information provided");
+                    }
+                } else {
+                    // Handle the regular JSON structure with "error" and "error_description"
+                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    String error = jsonResponse.optString("error", "Unknown error");
+                    String errorDescription = jsonResponse.optString("error_description", "No description provided");
+                    throw new ApiException(statusCode, error, errorDescription);
+                }
             }
         }
     }
-}
 
     // Endpoints
 
