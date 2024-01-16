@@ -45,11 +45,13 @@ public class StarlingClient {
     /**
      * Sends an HTTP request with the specified request object and returns the response body as a string.
      * Sets the necessary headers for authentication and content type.
-     * Throws a RuntimeException if the response status code is not 200.
+     * Throws an IOException if an I/O error occurs while sending the request.
+     * Throws an ApiException if the response status code is not 200 and the response body contains an error message.
      *
      * @param request the HTTP request object
      * @return the response body as a string
      * @throws IOException if an I/O error occurs while sending the request
+     * @throws ApiException 
      */
     private String sendRequest(HttpUriRequest request) throws IOException, ApiException {
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
