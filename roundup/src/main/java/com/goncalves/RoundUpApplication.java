@@ -1,11 +1,17 @@
 package com.goncalves;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.Scanner;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import com.goncalves.api.StarlingClient;
+import com.goncalves.exceptions.ApiException;
 import com.goncalves.service.RoundUpCalculator;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 /**
  * This class represents the RoundUpApplication which is responsible for calculating the total round-up amount from
@@ -20,13 +26,33 @@ public class RoundUpApplication {
     *
     * @param args command line arguments
     * @throws IOException if an I/O error occurs
+     * @throws ApiException 
     */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ApiException {
+        // Load the properties file containing the access token
+        Properties prop = new Properties();
+        String accessToken = "";
+
+        try (InputStream input = new FileInputStream("roundup/resources/config.properties")) {
+            // Load the properties file
+            prop.load(input);
+            // Retrieve the access token
+            accessToken = prop.getProperty("ACCESS_TOKEN");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return;
+        }
+
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            System.out.println("Access token is not set or invalid in the properties file.");
+            return; // Exit the application if the token is not provided
+        }
+
         // Create a scanner to read user input
         Scanner scanner = new Scanner(System.in);
 
         // Create a Starling client with the access token
-        StarlingClient client = new StarlingClient("eyJhbGciOiJQUzI1NiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAA_21TQZKbMBD8SorzzhYWsqG45ZYP5AEjzWCrFiRKEt5spfL3CATGuPZGd8_09Ejib2FCKNoCRwPEg3sPEX1v7FWh_XjXbijeijCpVKFEVZ3quoaGKwlSKgGKawHYnGXJVYkVUSrmP2PRnuryLGXTVOKtMBgzUV2EnAnU2k02_nI9sf9taPUua6mgO5UE8iySt2jOIFSJqiq1uNSYvKP7YLt3cFMR8KVsUseFIQVgUPp8Yi06gWpOk9b6qTWHsHdhxwpYNiVIwamrrhmoqZNbc-mqk5gX1m7k-VByUrgtUcHiwK1npB8vQvwaXwRDbKPpDPsj35sQD8wKiHwK2TKZ-ABZiRH1beBH5RRvzpuQbgiMJXM3NGGfNYU9Wr0m0egJtLPRuz77zsyqOdsZP2A0zoLroJssrfP0FKIbttg8oFm7B7SEkVviniM_4FI2cMSEsNUJzuKGl84Rv5g3KYPVJIO9CMyA19Uza_snRI82oJ4zP2jonU7b796ZADcfwyu7dnnXmX4blWcfqKXKs2YzxgMIR-nTm-Qe8J6uIsDV7TkO3LrqgVt8npm8XJeO_RuLXfzGaxezqb4xTT0TpLX3VxM4xrTgNK5wxO2ZpN89vaL0mJynp_FHdpt7ZL_pB_dpH3zkOQDocH-lRuoy9Xyny1W8XnLx7z8wwjWXoQQAAA.g25IU0a39Sj2Dta9kQHpwzR8Iuszm1D1AAInKdc10i1A48HkG9Jj8YwEtwpbnhfdZfJubIzk187_6r6eq6xr8FzjvILmpDJTpznzM2Unnny3VbQiQn-1gQyqmnzX47dq50tCwd4XRUistlriJYQp8sYE57QvNQRmDk-2BhqkhoNc4UgPnQnstjSDqk3x67irmem4y0GYYwCv2vq4CHdbU10IRr8dPwpom9GK00PA1OhueyuffnLsiDLtXe3AoRIL8bikp5MXFTnwrl-Z3yAzrbHkGbW2rh0xIzq3gZWUzrv4bVemEhcqUPaZVezZhf7fuJ_2pIGsuKTnx86feHsDVECipl4Zvd5txXAAiUzc_HczQ3VuXzN51QVGz7XSvrWZc28MiBb9Dj6h2U1mzBWHoejJVfVHUDGea7LqToPTOF-koD2nOfSNBsbqyWhTUj5zlstg3dDzgzJIhN4luX-vHHIaxhXxr5YbAINApNOoDZ73fBl61iv0I3El0GEvIt45piThJvkz3mSy2C4byn6ey2CHqG9r0l1RNlKFv_ChD6zwQ3NYa9ksDMDrFHDDdirpAx_yqxHrEuk-y51CwIJVuniMRgvWzQ6eZIQhH_O_QF3QzsJu2tOKSCkx6hyQumCECCOJ8yhGeb24IvHKJ3SA-xFOamK-fI0h4KI3Zp-hbsY");
+        StarlingClient client = new StarlingClient(accessToken);
 
         // Get account details
         String accountDetailsJson = client.getAccountDetails();
@@ -35,12 +61,29 @@ public class RoundUpApplication {
         String accountUid = accounts.getJSONObject(0).getString("accountUid");
         String categoryUid = accounts.getJSONObject(0).getString("defaultCategory");
 
-        // Get transactions between specific timestamps
+
+        // Get the start and end dates from the user
         System.out.println("Enter the start date (YYYY-MM-DD): ");
-        String startDate = scanner.nextLine() + "T00:00:00Z";
+        String startDateInput = scanner.nextLine();
         System.out.println("Enter the end date (YYYY-MM-DD): ");
-        String endDate = scanner.nextLine() + "T00:00:00Z";
+        String endDateInput = scanner.nextLine();
+
+        // Validate the date format
+        try {
+            LocalDate.parse(startDateInput);
+            LocalDate.parse(endDateInput);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please enter dates in the format YYYY-MM-DD.");
+            scanner.close();
+            return; // Exit the application if the dates are invalid
+        }
+        String startDate = startDateInput + "T00:00:00Z";
+        String endDate = endDateInput + "T00:00:00Z";
+
+        // Get transactions between specific timestamps
         String transactionsJson = client.getTransactionsBetween(accountUid, categoryUid, startDate, endDate);
+
+        
 
         // Calculate the total round-up amount for the transactions
         RoundUpCalculator calculator = new RoundUpCalculator();

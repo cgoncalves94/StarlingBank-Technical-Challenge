@@ -1,4 +1,6 @@
+
 package com.goncalves.api;
+
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -7,7 +9,11 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.goncalves.exceptions.ApiException;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.HttpUriRequest;
 
@@ -45,22 +51,39 @@ public class StarlingClient {
      * @return the response body as a string
      * @throws IOException if an I/O error occurs while sending the request
      */
-    private String sendRequest(HttpUriRequest request) throws IOException {
-        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        request.setHeader(HttpHeaders.ACCEPT, "application/json");
+private String sendRequest(HttpUriRequest request) throws IOException, ApiException {
+    request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+    request.setHeader(HttpHeaders.ACCEPT, "application/json");
 
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
-            int statusCode = response.getStatusLine().getStatusCode();
-            String responseBody = EntityUtils.toString(response.getEntity());
+    try (CloseableHttpResponse response = httpClient.execute(request)) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        String responseBody = EntityUtils.toString(response.getEntity());
 
-            if (statusCode != 200) {
-                // Log the response body here to understand more about the failure
-                System.err.println("Response body: " + responseBody);
-                throw new RuntimeException("Failed: HTTP error code: " + statusCode);
-            }
+        if (statusCode == 200) {
             return responseBody;
+        } else {
+            // Parse the error response based on the expected JSON structure
+            if (responseBody.contains("\"errors\"")) {
+                // Handle the JSON structure with an "errors" array
+                JSONObject jsonResponse = new JSONObject(responseBody);
+                JSONArray errors = jsonResponse.optJSONArray("errors");
+                if (errors != null && errors.length() > 0) {
+                    JSONObject firstError = errors.getJSONObject(0);
+                    String message = firstError.optString("message", "No message provided");
+                    throw new ApiException(statusCode, "Error response received", message);
+                } else {
+                    throw new ApiException(statusCode, "Unknown error", "No error information provided");
+                }
+            } else {
+                // Handle the regular JSON structure with "error" and "error_description"
+                JSONObject jsonResponse = new JSONObject(responseBody);
+                String error = jsonResponse.optString("error", "Unknown error");
+                String errorDescription = jsonResponse.optString("error_description", "No description provided");
+                throw new ApiException(statusCode, error, errorDescription);
+            }
         }
     }
+}
 
     // Endpoints
 
@@ -69,8 +92,9 @@ public class StarlingClient {
      *
      * @return the account details as a string
      * @throws IOException if an I/O error occurs while sending the request
+     * @throws ApiException 
      */
-    public String getAccountDetails() throws IOException {
+    public String getAccountDetails() throws IOException, ApiException {
         HttpGet request = new HttpGet(baseUrl + "/api/v2/accounts");
         return sendRequest(request);
     }
@@ -84,8 +108,9 @@ public class StarlingClient {
      * @param maxTransactionTimestamp the maximum transaction timestamp
      * @return the transactions as a string
      * @throws IOException if an I/O error occurs while sending the request
+     * @throws ApiException 
      */
-    public String getTransactionsBetween(String accountUid, String categoryUid, String minTransactionTimestamp, String maxTransactionTimestamp) throws IOException {
+    public String getTransactionsBetween(String accountUid, String categoryUid, String minTransactionTimestamp, String maxTransactionTimestamp) throws IOException, ApiException {
         String url = baseUrl + "/api/v2/feed/account/" + accountUid + "/category/" + categoryUid
                 + "/transactions-between?minTransactionTimestamp=" + minTransactionTimestamp
                 + "&maxTransactionTimestamp=" + maxTransactionTimestamp;
@@ -100,8 +125,9 @@ public class StarlingClient {
      * @param accountUid the account UID
      * @return the savings goals as a string
      * @throws IOException if an I/O error occurs while sending the request
+     * @throws ApiException 
      */
-    public String getSavingsGoals(String accountUid) throws IOException {
+    public String getSavingsGoals(String accountUid) throws IOException, ApiException {
         HttpGet request = new HttpGet(baseUrl + "/api/v2/account/" + accountUid + "/savings-goals");
         return sendRequest(request);
     }
@@ -115,8 +141,9 @@ public class StarlingClient {
      * @param targetMinorUnits  the target amount in minor units
      * @return the created savings goal as a JSONObject
      * @throws IOException if an I/O error occurs while sending the request
+     * @throws ApiException 
      */
-    public JSONObject createSavingsGoal(String accountUid, String name, String currency, int targetMinorUnits) throws IOException {
+    public JSONObject createSavingsGoal(String accountUid, String name, String currency, int targetMinorUnits) throws IOException, ApiException {
         HttpPut request = new HttpPut(baseUrl + "/api/v2/account/" + accountUid + "/savings-goals");
         JSONObject target = new JSONObject();
         target.put("currency", currency);
@@ -143,8 +170,9 @@ public class StarlingClient {
      * @param amount           the amount to add in minor units
      * @param currency         the currency of the amount
      * @throws IOException if an I/O error occurs while sending the request
+     * @throws ApiException 
      */
-    public void addMoneyToSavingsGoal(String accountUid, String savingsGoalUid, int amount, String currency) throws IOException {
+    public void addMoneyToSavingsGoal(String accountUid, String savingsGoalUid, int amount, String currency) throws IOException, ApiException {
         UUID transferUid = UUID.randomUUID(); // Generate a unique transfer ID
         HttpPut request = new HttpPut(baseUrl + "/api/v2/account/" + accountUid + "/savings-goals/" + savingsGoalUid + "/add-money/" + transferUid);
         String json = "{\"amount\":{\"currency\":\"" + currency + "\",\"minorUnits\":" + amount + "}}";
