@@ -30,6 +30,10 @@ Please refer to the `pom.xml` file for the complete list of dependencies.
 6. When prompted, enter the start and end dates for the transactions in the format `YYYY-MM-DD`.
 7. If there are no existing savings goals, you will be prompted to create a new one by entering a name, target amount, and currency for the goal.
 
+## Author
+
+Cesar Goncalves
+
 ## Note
 
 This application assumes that the Starling API responds with JSON data in a specific format. If the API response format changes, the application may not work as expected.
