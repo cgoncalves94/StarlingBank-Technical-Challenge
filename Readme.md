@@ -30,9 +30,7 @@ The project adheres to the separation of concerns principle and is organized int
 The project uses Maven for managing dependencies. Key libraries include:
 
 - `httpclient` - For HTTP protocol support.
-- `jackson-databind` - For JSON parsing and serialization.
 - `junit-jupiter-api`, `mockito-core`, `assertj-core` - For unit testing and assertions.
-- `slf4j-api` - For logging.
 - `json` - For additional JSON handling capabilities.
 
 ## Validate the Access Token

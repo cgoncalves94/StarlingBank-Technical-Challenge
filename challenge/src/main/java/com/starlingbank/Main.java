@@ -1,7 +1,6 @@
 package com.starlingbank;
 
-
-
+// Importing necessary classes and packages
 import com.starlingbank.api.StarlingClient;
 import com.starlingbank.config.ConfigManager;
 import com.starlingbank.exceptions.ApiException;
@@ -13,27 +12,34 @@ import com.starlingbank.util.UserInputHandler;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+// Main class of the application
 public class Main {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    // Logger for logging any errors or exceptions
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
+    // Main method of the application
     public static void main(String[] args) {
         try {
+            // Setting up services and running the application
             ApplicationRunner appRunner = setupServices();
             appRunner.runApplication();
         } catch (IOException | ApiException e) {
-            logger.error("An error occurred: ", e);
+            // Logging any errors or exceptions that occur
+            LOGGER.log(Level.SEVERE, "An error occurred: ", e);
         }
     }
 
-    private static ApplicationRunner setupServices() throws IOException, ApiException {
+    // Method to setup services for the application
+    private static ApplicationRunner setupServices() {
         // Initialize configuration manager and get access token
         ConfigManager configManager = new ConfigManager();
         String accessToken = configManager.getAccessToken();
 
+        // Check if access token is valid
         if (accessToken == null || accessToken.trim().isEmpty()) {
             throw new IllegalArgumentException("Access token is not set or invalid in the properties file.");
         }
@@ -47,6 +53,7 @@ public class Main {
         // Initialize the round-up calculator and user input handler
         RoundUpCalculator calculator = new RoundUpCalculator();
         UserInputHandler userInputHandler = new UserInputHandler();
+        // Return a new instance of ApplicationRunner with the initialized services
         return new ApplicationRunner(accountService, transactionService, savingsGoalService, calculator, userInputHandler);
     }
 }

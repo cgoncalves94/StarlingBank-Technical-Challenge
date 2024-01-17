@@ -17,6 +17,11 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * The ApplicationRunner class is responsible for running the application.
+ * It fetches account details, gets start and end dates from the user, gets transactions between specific timestamps,
+ * calculates the total round-up amount, and manages savings goals.
+ */
 public class ApplicationRunner {
     private final AccountService accountService;
     private final TransactionService transactionService;
@@ -24,6 +29,10 @@ public class ApplicationRunner {
     private final RoundUpCalculator calculator;
     private final UserInputHandler userInputHandler;
 
+    /**
+     * Constructor for ApplicationRunner.
+     * Initializes the services, calculator, and user input handler.
+     */
     public ApplicationRunner(AccountService accountService, TransactionService transactionService, SavingsGoalService savingsGoalService, RoundUpCalculator calculator, UserInputHandler userInputHandler) {
         this.accountService = accountService;
         this.transactionService = transactionService;
@@ -32,6 +41,13 @@ public class ApplicationRunner {
         this.userInputHandler = userInputHandler;
     }
 
+    /**
+     * Runs the application.
+     * Fetches account details, gets start and end dates from the user, gets transactions between specific timestamps,
+     * calculates the total round-up amount, and manages savings goals.
+     * @throws IOException if an I/O error occurs.
+     * @throws ApiException if an API error occurs.
+     */
     public void runApplication() throws IOException, ApiException {
         // Fetch account details
         Account account = accountService.getAccountDetails();
@@ -62,6 +78,14 @@ public class ApplicationRunner {
         manageSavingsGoals(accountUid, totalRoundUpMinorUnits, totalRoundUpPounds);
     }
 
+    /**
+     * Manages savings goals.
+     * If there are no savings goals, it prompts the user to create one.
+     * If there is a round-up amount, it adds it to the savings goal.
+     * @param accountUid The account UID.
+     * @param totalRoundUpMinorUnits The total round-up amount in minor units.
+     * @param totalRoundUpPounds The total round-up amount in pounds.
+     */
     private void manageSavingsGoals(String accountUid, int totalRoundUpMinorUnits, double totalRoundUpPounds) {
         List<SavingGoal> savingsGoals = savingsGoalService.getSavingsGoals(accountUid);
         String savingsGoalUid;
