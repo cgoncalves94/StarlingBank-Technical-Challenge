@@ -1,34 +1,52 @@
-# RoundUp Application
+# Starling Bank Technical Challenge
 
-The RoundUp Application is a Java-based application that calculates the total round-up amount from transactions, creates a savings goal, and transfers the round-up amount to the savings goal.
+The RoundUp feature is a Java-based application designed to help users automatically round up transactions to the nearest pound and save the difference.
+
+## Project Structure
+
+The project adheres to the separation of concerns principle and is organized into the following packages:
+
+- `api` - Classes for interacting with the Starling Bank API.
+- `service` - Business logic for managing accounts, transactions, and savings goals.
+- `exceptions` - Custom exceptions for error handling.
+- `util` - Utility classes for common functionalities like rounding up calculations and user input handling.
+- `model` - Data models representing the core business objects.
 
 ## Main Classes
 
-- `api/StarlingClient.java`: This class is a client for interacting with the Starling Bank API. It provides methods to perform various operations, such as retrieving account details, getting transactions between specific timestamps, checking savings goals, creating savings goals, and adding money to savings goals. This class requires an access token to authenticate with the Starling Bank API. The access token should be provided when constructing an instance of `StarlingClient`.
-
-- `service/RoundUpCalculator.java`: This class provides methods to calculate the round-up amount for transactions and the total round-up amount for a list of transactions.
-
-- `RoundUpApplication.java`: This class represents the RoundUpApplication which is responsible for calculating the total round-up amount from transactions, creating a savings goal, and transferring the round-up amount to the savings goal.
+- `StarlingClient` - Facilitates communication with the Starling Bank API endpoints.
+- `AccountService` - Manages account-related operations.
+- `TransactionService` - Handles retrieval and processing of transaction data.
+- `SavingsGoalService` - Oversees the creation and updating of savings goals.
+- `ApiException` and `ServiceException` - Defines exceptions for API and service layer errors.
+- `RoundUpCalculator` - Calculates the round-up amount from a list of transactions.
+- `UserInputHandler` - Provides methods for handling user input within the application.
+- `Account`, `Transaction`, `SavingGoal`, `Amount` - Representations of the respective domain entities. The `Amount` class typically encapsulates monetary values, handling currency and minor units.
+- `ApplicationRunner` - Orchestrates the flow of the application logic.
+- `Main` - Entry point for the application, responsible for initializing and starting the application.
 
 ## Dependencies
 
-This project uses Maven for dependency management. The main dependencies include:
+The project uses Maven for managing dependencies. Key libraries include:
 
-- `org.apache.httpcomponents:httpclient:4.5.14` for making HTTP requests.
-- `com.fasterxml.jackson.core:jackson-databind:2.16.1` for JSON processing.
-- `org.json:json:20231013` for handling JSON data.
+- `httpclient` - For HTTP protocol support.
+- `jackson-databind` - For JSON parsing and serialization.
+- `junit-jupiter-api`, `mockito-core`, `assertj-core` - For unit testing and assertions.
+- `slf4j-api` - For logging.
+- `json` - For additional JSON handling capabilities.
 
-Please refer to the `pom.xml` file for the complete list of dependencies.
+## Validate the Access Token
+- Go to the Starling Bank Developers Account and refresh/generate a new access token.
 
 ## How to Run
 
-1. Clone the repository to your local machine.
-2. Navigate to the project directory.
-3. Ensure you have a valid access token set in the `roundup/resources/config.properties` file.
-4. Build the project using Maven by running the command `mvn clean install`.
-5. Run the application using the command `java -cp target/roundup-1.0-SNAPSHOT.jar com.goncalves.RoundUpApplication`.
-6. When prompted, enter the start and end dates for the transactions in the format `YYYY-MM-DD`.
-7. If there are no existing savings goals, you will be prompted to create a new one by entering a name, target amount, and currency for the goal.
+Ensure you have Java and Maven installed on your system before proceeding.
+
+1. Clone the repository:
+2. Navigate to the project directory:
+3. Add a valid access token to `config.properties` in the value `ACCESS_TOKEN`.
+4. Build the project: `mvn clean install`
+5. Run the application: `java -cp target/roundup-1.0-SNAPSHOT.jar com.starlingbank.Main`
 
 ## Author
 
@@ -36,4 +54,4 @@ Cesar Goncalves
 
 ## Note
 
-This application assumes that the Starling API responds with JSON data in a specific format. If the API response format changes, the application may not work as expected.
+The application's functionality is dependent on the Starling Bank API's current schema. Any changes to the API may require updates to the application code.
