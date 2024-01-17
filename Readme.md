@@ -46,8 +46,6 @@ Ensure you have Java and Maven installed on your system before proceeding.
 4. Build the project: `mvn clean install`
 5. Run the application: `java -jar target/starlingbank.challenge-1.0-RELEASE.jar`
 
-challenge/src/main/java/com/starlingbank/Main.java
-
 ## Author
 
 Cesar Goncalves
