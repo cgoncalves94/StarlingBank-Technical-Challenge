@@ -26,12 +26,12 @@ public class Main {
         try {
             // Attempt to set up the application runner with the access token from the config
             ApplicationRunner appRunner = setupServices();
-    
+
             if (appRunner == null) {
                 LOGGER.log(Level.SEVERE, "Please update the configuration file with a valid access token.");
                 return; // Exit the application
             }
-    
+
             // Run the application
             appRunner.runApplication();
         } catch (IOException | ApiException e) {
@@ -39,27 +39,27 @@ public class Main {
         }
     }
 
-    // Method to setup services for the application
+    // Method to set up services for the application
     private static ApplicationRunner setupServices() {
         ConfigManager configManager = new ConfigManager();
         String accessToken = configManager.getAccessToken();
-    
+
         if (accessToken == null || accessToken.trim().isEmpty()) {
             LOGGER.log(Level.SEVERE, "Access token is not set or invalid in the properties file.");
             return null; // Token is not set or is empty
         }
-    
+
         try {
             StarlingClient client = new StarlingClient(accessToken);
             client.getAccountDetails(); // Validate the token by attempting an API call
-    
+
             // If the token is valid, set up the rest of the services
             AccountService accountService = new AccountService(client);
             TransactionService transactionService = new TransactionService(client);
             SavingsGoalService savingsGoalService = new SavingsGoalService(client);
             RoundUpCalculator calculator = new RoundUpCalculator();
             UserInputHandler userInputHandler = new UserInputHandler();
-    
+
             return new ApplicationRunner(accountService, transactionService, savingsGoalService, calculator, userInputHandler);
         } catch (IOException | ApiException e) {
             LOGGER.log(Level.SEVERE, "The provided access token is not valid: {0}", e.getMessage());

@@ -66,13 +66,13 @@ public class SavingsGoalService {
     }
 
     /**
-     * Creates a new savings goal for a given account.
-     * @param account Account object containing the unique identifier for the account
-     * @param name Name of the savings goal
-     * @param currency Currency of the savings goal
-     * @param targetMinorUnits Target amount for the savings goal in minor units
-     * @return SavingGoal object representing the newly created savings goal
-     * @throws ServiceException if there is an error creating the savings goal
+     * This method creates a new savings goal for a given account.
+     *
+     * @param account Account object having the unique identifier for the account for which savings goal is being created
+     * @param goalName Name of the savings goal
+     * @param targetAmount Amount object which includes the currency code and minor units, representing the target amount for the savings goal
+     * @return A SavingGoal object that represents the newly created savings goal. It includes the savings goal's unique identifier, name, and target amount
+     * @throws ServiceException  If there's an error while creating the savings goal due to an IOException or ApiException. It contains an error message and the original exception.
      */
     public SavingGoal createSavingsGoal(Account account, String goalName, Amount targetAmount) {
         try {
@@ -84,11 +84,11 @@ public class SavingsGoalService {
             throw new ServiceException("Error creating savings goal: " + goalName, e);
         }
     }
-    
+
 
     /**
      * Adds money to the specified savings goal for the given account.
-     * 
+     *
      * @param account     The account object containing the unique identifier for the account.
      * @param savingGoal  The saving goal object containing the unique identifier for the savings goal.
      * @param amount      The amount object containing the currency and the amount in minor units to add to the savings goal.

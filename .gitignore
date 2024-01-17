@@ -1,3 +1,5 @@
 .idea/
 .vscode/
 target/
+challenge/dependency-reduced-pom.xml
+

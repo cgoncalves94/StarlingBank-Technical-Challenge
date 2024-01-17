@@ -99,10 +99,10 @@ public class ApplicationRunner {
             String goalName = userInputHandler.readString("Enter a name for your savings goal: ");
             double targetAmountPounds = userInputHandler.readDouble("Enter your target amount in pounds: ");
             Amount targetAmount = new Amount((int) (targetAmountPounds * 100), "GBP"); // Assuming the currency is always GBP
-        
+
             targetSavingGoal = savingsGoalService.createSavingsGoal(account, goalName, targetAmount);
         } else {
-            targetSavingGoal = savingsGoals.get(0); // Assuming you want to use the first savings goal
+            targetSavingGoal = savingsGoals.getFirst(); // Assuming you want to use the first savings goal
         }
 
         if (totalRoundUpMinorUnits > 0) {
