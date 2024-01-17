@@ -58,6 +58,12 @@ public class ApplicationRunner {
         LocalDate startDate = userInputHandler.readDate("Enter the start date (YYYY-MM-DD): ");
         LocalDate endDate = userInputHandler.readDate("Enter the end date (YYYY-MM-DD): ");
 
+        // Validate that the start date is before the end date
+        if (!startDate.isBefore(endDate)) {
+            System.out.println("Invalid date range. The start date must be before the end date.");
+            return; // Or loop back to ask for the dates again
+        }
+
         // Convert LocalDate to ZonedDateTime at the start of the day in UTC
         ZonedDateTime startDateTime = startDate.atStartOfDay(ZoneOffset.UTC);
         ZonedDateTime endDateTime = endDate.atStartOfDay(ZoneOffset.UTC);
@@ -68,7 +74,7 @@ public class ApplicationRunner {
         String formattedEndDate = endDateTime.format(formatter);
 
         // Get transactions between specific timestamps
-        List<Transaction> transactions = transactionService.getTransactionsBetween(account.getAccountUid(), account.getCategoryUid(), formattedStartDate, formattedEndDate);
+        List<Transaction> transactions = transactionService.getTransactions(account.getAccountUid(), account.getCategoryUid(), formattedStartDate, formattedEndDate);
 
         // Calculate the total round-up amount
         int totalRoundUpMinorUnits = calculator.calculateTotalRoundUp(transactions);

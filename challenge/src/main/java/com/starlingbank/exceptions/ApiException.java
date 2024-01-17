@@ -12,6 +12,8 @@ public class ApiException extends Exception {
     // Detailed description of the API error
     private final String errorDescription;
 
+    
+
     /**
      * Constructor for the ApiException class.
      * It initializes the status code, error message, and error description of the API error.

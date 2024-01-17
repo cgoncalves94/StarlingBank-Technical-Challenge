@@ -24,36 +24,46 @@ public class Main {
     // Main method of the application
     public static void main(String[] args) {
         try {
-            // Setting up services and running the application
+            // Attempt to set up the application runner with the access token from the config
             ApplicationRunner appRunner = setupServices();
+    
+            if (appRunner == null) {
+                LOGGER.log(Level.SEVERE, "Please update the configuration file with a valid access token.");
+                return; // Exit the application
+            }
+    
+            // Run the application
             appRunner.runApplication();
         } catch (IOException | ApiException e) {
-            // Logging any errors or exceptions that occur
             LOGGER.log(Level.SEVERE, "An error occurred: ", e);
         }
     }
 
     // Method to setup services for the application
     private static ApplicationRunner setupServices() {
-        // Initialize configuration manager and get access token
         ConfigManager configManager = new ConfigManager();
         String accessToken = configManager.getAccessToken();
-
-        // Check if access token is valid
+    
         if (accessToken == null || accessToken.trim().isEmpty()) {
-            throw new IllegalArgumentException("Access token is not set or invalid in the properties file.");
+            LOGGER.log(Level.SEVERE, "Access token is not set or invalid in the properties file.");
+            return null; // Token is not set or is empty
         }
-
-        // Initialize the API client and service classes
-        StarlingClient client = new StarlingClient(accessToken);
-        AccountService accountService = new AccountService(client);
-        TransactionService transactionService = new TransactionService(client);
-        SavingsGoalService savingsGoalService = new SavingsGoalService(client);
-
-        // Initialize the round-up calculator and user input handler
-        RoundUpCalculator calculator = new RoundUpCalculator();
-        UserInputHandler userInputHandler = new UserInputHandler();
-        // Return a new instance of ApplicationRunner with the initialized services
-        return new ApplicationRunner(accountService, transactionService, savingsGoalService, calculator, userInputHandler);
+    
+        try {
+            StarlingClient client = new StarlingClient(accessToken);
+            client.getAccountDetails(); // Validate the token by attempting an API call
+    
+            // If the token is valid, set up the rest of the services
+            AccountService accountService = new AccountService(client);
+            TransactionService transactionService = new TransactionService(client);
+            SavingsGoalService savingsGoalService = new SavingsGoalService(client);
+            RoundUpCalculator calculator = new RoundUpCalculator();
+            UserInputHandler userInputHandler = new UserInputHandler();
+    
+            return new ApplicationRunner(accountService, transactionService, savingsGoalService, calculator, userInputHandler);
+        } catch (IOException | ApiException e) {
+            LOGGER.log(Level.SEVERE, "The provided access token is not valid: {0}", e.getMessage());
+            return null; // Token validation failed
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.exceptions.ServiceException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -36,6 +37,10 @@ public class SavingsGoalService {
      * @throws ServiceException if there is an error fetching savings goals
      */
     public List<SavingGoal> getSavingsGoals(String accountUid) {
+        // Validate input
+        if (accountUid == null) {
+            throw new IllegalArgumentException("accountUid cannot be null");
+        }
         try {
             String response = starlingClient.getSavingsGoals(accountUid);
             JSONArray savingsGoalsJson = new JSONObject(response).getJSONArray("savingsGoalList");
@@ -51,8 +56,12 @@ public class SavingsGoalService {
                 savingsGoals.add(new SavingGoal(savingsGoalUid, name, target));
             }
             return savingsGoals;
-        } catch (IOException | ApiException e) {
-            throw new ServiceException("Error fetching savings goals", e);
+        } catch (ApiException e) {
+            throw new ServiceException("Error communicating with the API", e);
+        } catch (IOException e) {
+            throw new ServiceException("Error reading the response from the API", e);
+        } catch (JSONException e) {
+            throw new ServiceException("Error parsing the response from the API", e);
         }
     }
 

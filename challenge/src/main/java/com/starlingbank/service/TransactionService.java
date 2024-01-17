@@ -6,6 +6,7 @@ import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.exceptions.ServiceException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -36,7 +37,11 @@ public class TransactionService {
      * @return List of Transaction objects
      * @throws ServiceException if there is an error fetching transactions
      */
-    public List<Transaction> getTransactionsBetween(String accountUid, String categoryUid, String minTransactionTimestamp, String maxTransactionTimestamp) {
+    public List<Transaction> getTransactions(String accountUid, String categoryUid, String minTransactionTimestamp, String maxTransactionTimestamp) {
+        // Validate input parameters
+        if (accountUid == null || accountUid.isEmpty() || categoryUid == null || categoryUid.isEmpty() || minTransactionTimestamp == null || minTransactionTimestamp.isEmpty() || maxTransactionTimestamp == null || maxTransactionTimestamp.isEmpty()) {
+            throw new IllegalArgumentException("Input parameters cannot be null or empty");
+        }
         try {
             String response = starlingClient.getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp);
             JSONArray transactionsJson = new JSONObject(response).getJSONArray("feedItems");
@@ -48,8 +53,12 @@ public class TransactionService {
                 transactions.add(new Transaction(minorUnits, source));
             }
             return transactions;
-        } catch (IOException | ApiException e) {
-            throw new ServiceException("Error fetching transactions", e);
+        } catch (IOException e) {
+            throw new ServiceException("Error communicating with the API", e);
+        } catch (ApiException e) {
+            throw new ServiceException("Error response from the API", e);
+        } catch (JSONException e) {
+            throw new ServiceException("Error parsing the response from the API", e);
         }
     }
 }
