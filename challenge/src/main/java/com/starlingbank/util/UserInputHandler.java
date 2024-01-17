@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 public class UserInputHandler {
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public UserInputHandler() {
         this.scanner = new Scanner(System.in);
@@ -38,7 +38,4 @@ public class UserInputHandler {
         return scanner.nextDouble();
     }
 
-    public void close() {
-        scanner.close();
-    }
 }

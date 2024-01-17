@@ -46,7 +46,9 @@ Ensure you have Java and Maven installed on your system before proceeding.
 2. Navigate to the project directory:
 3. Add a valid access token to `config.properties` in the value `ACCESS_TOKEN`.
 4. Build the project: `mvn clean install`
-5. Run the application: `java -cp target/roundup-1.0-SNAPSHOT.jar com.starlingbank.Main`
+5. Run the application: `java -jar target/starlingbank.challenge-1.0-RELEASE.jar`
+
+challenge/src/main/java/com/starlingbank/Main.java
 
 ## Author
 

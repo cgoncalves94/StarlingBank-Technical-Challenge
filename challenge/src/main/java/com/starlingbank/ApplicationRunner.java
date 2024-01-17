@@ -62,7 +62,7 @@ public class ApplicationRunner {
         manageSavingsGoals(accountUid, totalRoundUpMinorUnits, totalRoundUpPounds);
     }
 
-    private void manageSavingsGoals(String accountUid, int totalRoundUpMinorUnits, double totalRoundUpPounds) throws IOException, ApiException {
+    private void manageSavingsGoals(String accountUid, int totalRoundUpMinorUnits, double totalRoundUpPounds) {
         List<SavingGoal> savingsGoals = savingsGoalService.getSavingsGoals(accountUid);
         String savingsGoalUid;
 
@@ -74,9 +74,9 @@ public class ApplicationRunner {
             SavingGoal createdGoal = savingsGoalService.createSavingsGoal(accountUid, goalName, "GBP", targetAmountMinorUnits);
             savingsGoalUid = createdGoal.getSavingsGoalUid();
         } else {
-            savingsGoalUid = savingsGoals.get(0).getSavingsGoalUid();
+            savingsGoalUid = savingsGoals.getFirst().getSavingsGoalUid();
         }
-    
+
         if (totalRoundUpMinorUnits > 0) {
             savingsGoalService.addMoneyToSavingsGoal(accountUid, savingsGoalUid, totalRoundUpMinorUnits, "GBP");
             System.out.printf("Total round-up amount transferred to savings goal: £%.2f%n", totalRoundUpPounds);

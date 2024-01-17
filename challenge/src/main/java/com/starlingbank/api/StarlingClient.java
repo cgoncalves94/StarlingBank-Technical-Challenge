@@ -83,21 +83,21 @@ public class StarlingClient {
         return sendRequest(request);
     }
 
-    public String addMoneyToSavingsGoal(String accountUid, String savingsGoalUid, int amount, String currency) throws IOException, ApiException {
+    public void addMoneyToSavingsGoal(String accountUid, String savingsGoalUid, int amount, String currency) throws IOException, ApiException {
         UUID transferUid = UUID.randomUUID();
         String url = baseUrl + "/api/v2/account/" + accountUid + "/savings-goals/" + savingsGoalUid + "/add-money/" + transferUid;
         HttpPut request = new HttpPut(url);
         JSONObject amountJson = new JSONObject();
         amountJson.put("currency", currency);
         amountJson.put("minorUnits", amount);
-    
+
         JSONObject addMoneyRequest = new JSONObject();
         addMoneyRequest.put("amount", amountJson);
-    
+
         StringEntity entity = new StringEntity(addMoneyRequest.toString());
         request.setEntity(entity);
         request.setHeader("Content-Type", "application/json");
-    
-        return sendRequest(request);
+
+        sendRequest(request);
     }
 }
