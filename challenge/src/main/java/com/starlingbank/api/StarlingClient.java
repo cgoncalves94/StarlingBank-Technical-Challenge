@@ -164,7 +164,7 @@ public class StarlingClient {
 
         StringEntity entity = new StringEntity(addMoneyRequest.toString());
         request.setEntity(entity);
-        request.setHeader("Content-Type", "application/json");
+        request.setHeader("Content-Type", APPLICATION_JSON);
 
         sendRequest(request);
     }

@@ -2,6 +2,7 @@ package com.starlingbank.service;
 
 import com.starlingbank.api.StarlingClient;
 import com.starlingbank.model.SavingGoal;
+import com.starlingbank.model.Account;
 import com.starlingbank.model.Amount;
 import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.exceptions.ServiceException;
@@ -57,38 +58,40 @@ public class SavingsGoalService {
 
     /**
      * Creates a new savings goal for a given account.
-     * @param accountUid Unique identifier for the account
+     * @param account Account object containing the unique identifier for the account
      * @param name Name of the savings goal
      * @param currency Currency of the savings goal
      * @param targetMinorUnits Target amount for the savings goal in minor units
      * @return SavingGoal object representing the newly created savings goal
      * @throws ServiceException if there is an error creating the savings goal
      */
-    public SavingGoal createSavingsGoal(String accountUid, String name, String currency, int targetMinorUnits) {
+    public SavingGoal createSavingsGoal(Account account, String goalName, Amount targetAmount) {
         try {
-            String response = starlingClient.createSavingsGoal(accountUid, name, currency, targetMinorUnits);
+            String response = starlingClient.createSavingsGoal(account.getAccountUid(), goalName, targetAmount.getCurrencyCode(), targetAmount.getMinorUnits());
             JSONObject goalJson = new JSONObject(response);
             String savingsGoalUid = goalJson.getString("savingsGoalUid");
-            Amount target = new Amount(targetMinorUnits, currency);
-            return new SavingGoal(savingsGoalUid, name, target);
+            return new SavingGoal(savingsGoalUid, goalName, targetAmount);
         } catch (IOException | ApiException e) {
-            throw new ServiceException("Error creating savings goal", e);
+            throw new ServiceException("Error creating savings goal: " + goalName, e);
         }
     }
+    
 
     /**
-     * Adds money to a savings goal.
-     * @param accountUid Unique identifier for the account
-     * @param savingsGoalUid Unique identifier for the savings goal
-     * @param amount Amount to add to the savings goal in minor units
-     * @param currency Currency of the savings goal
-     * @throws ServiceException if there is an error adding money to the savings goal
+     * Adds money to the specified savings goal for the given account.
+     * 
+     * @param account     The account object containing the unique identifier for the account.
+     * @param savingGoal  The saving goal object containing the unique identifier for the savings goal.
+     * @param amount      The amount object containing the currency and the amount in minor units to add to the savings goal.
+     * @throws ServiceException if there is an error adding money to the savings goal.
      */
-    public void addMoneyToSavingsGoal(String accountUid, String savingsGoalUid, int amount, String currency) {
+    public void addMoneyToSavingsGoal(Account account, SavingGoal savingGoal, Amount amount) {
         try {
-            starlingClient.addMoneyToSavingsGoal(accountUid, savingsGoalUid, amount, currency);
+            String currency = amount.getCurrencyCode();
+            int minorUnits = amount.getMinorUnits();
+            starlingClient.addMoneyToSavingsGoal(account.getAccountUid(), savingGoal.getSavingsGoalUid(), minorUnits, currency);
         } catch (IOException | ApiException e) {
-            throw new ServiceException("Error adding money to savings goal", e);
+            throw new ServiceException("Error adding money to savings goal: " + savingGoal.getName(), e);
         }
     }
 }

@@ -1,40 +1,52 @@
 package com.starlingbank.model;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.Locale;
+
 /**
  * Represents an Amount in the Starling Bank system.
  */
 public class Amount {
-    // The amount in minor units (e.g., pences for GBP)
     private final int minorUnits;
-    // The currency of the amount (e.g., GBP, EUR)
-    private final String currency;
+    private final String currencyCode;
 
-    /**
-     * Constructs an Amount with the specified minor units and currency.
-     *
-     * @param minorUnits the amount in minor units
-     * @param currency the currency of the amount
-     */
-    public Amount(int minorUnits, String currency) {
+    public Amount(int minorUnits, String currencyCode) {
         this.minorUnits = minorUnits;
-        this.currency = currency;
+        this.currencyCode = currencyCode;
     }
 
-    /**
-     * Returns the amount in minor units.
-     *
-     * @return the amount in minor units
-     */
     public int getMinorUnits() {
         return minorUnits;
     }
 
-    /**
-     * Returns the currency of the amount.
-     *
-     * @return the currency of the amount
-     */
-    public String getCurrency() {
-        return currency;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
+
+    // Converts minor units to major units (e.g., pence to pounds)
+    public BigDecimal toMajorUnits() {
+        Currency currency = Currency.getInstance(currencyCode);
+        return BigDecimal.valueOf(minorUnits, currency.getDefaultFractionDigits());
+    }
+
+    // Formats the amount for display, e.g., "£10.00" or "€10.00"
+    public String format(Locale locale) {
+        BigDecimal amount = toMajorUnits();
+        Currency currency = Currency.getInstance(currencyCode);
+        NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+        format.setCurrency(currency);
+        return format.format(amount);
+    }
+
+    // Add arithmetic operations if needed, for example:
+    public Amount add(Amount other) {
+        if (!this.currencyCode.equals(other.currencyCode)) {
+            throw new IllegalArgumentException("Cannot add amounts with different currencies");
+        }
+        return new Amount(this.minorUnits + other.minorUnits, this.currencyCode);
+    }
+
+    // More operations like subtract, multiply could be added here
 }

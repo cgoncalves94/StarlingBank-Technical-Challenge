@@ -4,7 +4,7 @@ package com.starlingbank.model;
  * Represents a Transaction in the Starling Bank system.
  */
 public class Transaction {
-    // The amount in minor units (e.g., pences for GBP)
+    // The amount in minor units (e.g., pence for GBP)
     private final int minorUnits;
     // The source of the transaction
     private final String source;

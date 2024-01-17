@@ -7,6 +7,7 @@ import com.starlingbank.util.RoundUpCalculator;
 import com.starlingbank.util.UserInputHandler;
 import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.model.Account;
+import com.starlingbank.model.Amount;
 import com.starlingbank.model.Transaction;
 import com.starlingbank.model.SavingGoal;
 
@@ -16,6 +17,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The ApplicationRunner class is responsible for running the application.
@@ -43,7 +45,7 @@ public class ApplicationRunner {
 
     /**
      * Runs the application.
-     * Fetches account details, gets start and end dates from the user, gets transactions between specific timestamps,
+     * Fetches account details, gets start and end dates from the user, retrieves transactions between specific timestamps,
      * calculates the total round-up amount, and manages savings goals.
      * @throws IOException if an I/O error occurs.
      * @throws ApiException if an API error occurs.
@@ -51,8 +53,6 @@ public class ApplicationRunner {
     public void runApplication() throws IOException, ApiException {
         // Fetch account details
         Account account = accountService.getAccountDetails();
-        String accountUid = account.getAccountUid();
-        String categoryUid = account.getCategoryUid();
 
         // Get the start and end dates from the user
         LocalDate startDate = userInputHandler.readDate("Enter the start date (YYYY-MM-DD): ");
@@ -68,42 +68,41 @@ public class ApplicationRunner {
         String formattedEndDate = endDateTime.format(formatter);
 
         // Get transactions between specific timestamps
-        List<Transaction> transactions = transactionService.getTransactionsBetween(accountUid, categoryUid, formattedStartDate, formattedEndDate);
+        List<Transaction> transactions = transactionService.getTransactionsBetween(account.getAccountUid(), account.getCategoryUid(), formattedStartDate, formattedEndDate);
 
         // Calculate the total round-up amount
         int totalRoundUpMinorUnits = calculator.calculateTotalRoundUp(transactions);
-        double totalRoundUpPounds = totalRoundUpMinorUnits / 100.0;
 
         // Manage savings goals
-        manageSavingsGoals(accountUid, totalRoundUpMinorUnits, totalRoundUpPounds);
+        manageSavingsGoals(account, totalRoundUpMinorUnits);
     }
+
 
     /**
      * Manages savings goals.
      * If there are no savings goals, it prompts the user to create one.
      * If there is a round-up amount, it adds it to the savings goal.
-     * @param accountUid The account UID.
+     * @param account The account object.
      * @param totalRoundUpMinorUnits The total round-up amount in minor units.
-     * @param totalRoundUpPounds The total round-up amount in pounds.
      */
-    private void manageSavingsGoals(String accountUid, int totalRoundUpMinorUnits, double totalRoundUpPounds) {
-        List<SavingGoal> savingsGoals = savingsGoalService.getSavingsGoals(accountUid);
-        String savingsGoalUid;
+    private void manageSavingsGoals(Account account, int totalRoundUpMinorUnits) {
+        List<SavingGoal> savingsGoals = savingsGoalService.getSavingsGoals(account.getAccountUid());
+        SavingGoal targetSavingGoal;
 
         if (savingsGoals.isEmpty()) {
             String goalName = userInputHandler.readString("Enter a name for your savings goal: ");
             double targetAmountPounds = userInputHandler.readDouble("Enter your target amount in pounds: ");
-            int targetAmountMinorUnits = (int) (targetAmountPounds * 100);
-
-            SavingGoal createdGoal = savingsGoalService.createSavingsGoal(accountUid, goalName, "GBP", targetAmountMinorUnits);
-            savingsGoalUid = createdGoal.getSavingsGoalUid();
+            Amount targetAmount = new Amount((int) (targetAmountPounds * 100), "GBP"); // Assuming the currency is always GBP
+        
+            targetSavingGoal = savingsGoalService.createSavingsGoal(account, goalName, targetAmount);
         } else {
-            savingsGoalUid = savingsGoals.getFirst().getSavingsGoalUid();
+            targetSavingGoal = savingsGoals.get(0); // Assuming you want to use the first savings goal
         }
 
         if (totalRoundUpMinorUnits > 0) {
-            savingsGoalService.addMoneyToSavingsGoal(accountUid, savingsGoalUid, totalRoundUpMinorUnits, "GBP");
-            System.out.printf("Total round-up amount transferred to savings goal: £%.2f%n", totalRoundUpPounds);
+            Amount roundUpAmount = new Amount(totalRoundUpMinorUnits, "GBP");
+            System.out.println("Total round-up amount to transfer: " + roundUpAmount.format(Locale.UK));
+            savingsGoalService.addMoneyToSavingsGoal(account, targetSavingGoal, roundUpAmount);
         } else {
             System.out.println("No round-up amount to transfer.");
         }

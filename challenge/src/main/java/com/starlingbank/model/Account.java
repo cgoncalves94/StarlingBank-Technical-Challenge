@@ -8,6 +8,7 @@ public class Account {
     private final String accountUid;
     // Unique identifier for the category associated with the account
     private final String categoryUid;
+    
 
     /**
      * Constructs a new Account with the specified accountUid and categoryUid.
