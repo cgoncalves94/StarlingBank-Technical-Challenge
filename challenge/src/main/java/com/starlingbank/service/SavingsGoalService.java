@@ -17,6 +17,7 @@ import com.starlingbank.model.SavingGoal;
 
 /**
  * Service class for managing savings goals.
+ * @author Cesar Goncalves
  */
 public class SavingsGoalService {
     // StarlingClient instance for API communication

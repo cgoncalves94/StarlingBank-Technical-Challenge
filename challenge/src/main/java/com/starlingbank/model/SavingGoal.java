@@ -2,6 +2,7 @@ package com.starlingbank.model;
 
 /**
  * Represents a Saving Goal in the Starling Bank system.
+ * @author Cesar Goncalves
  */
 public class SavingGoal {
     private final String savingsGoalUid;  // Saving Goal Unique Identifier

@@ -7,6 +7,7 @@ import java.util.Locale;
 
 /**
  * Represents an Amount in the Starling Bank system.
+ * @author Cesar Goncalves
  */
 public class Amount {
     private final int minorUnits;

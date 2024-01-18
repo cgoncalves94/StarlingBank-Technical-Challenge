@@ -19,6 +19,7 @@ public class ApiException extends Exception {
      * @param statusCode       The status code of the API response.
      * @param error            The error message of the API response.
      * @param errorDescription The detailed description of the API error.
+     * @author Cesar Goncalves
      */
     public ApiException(int statusCode, String error, String errorDescription) {
         super(String.format("Status Code: %d, Error: %s, Description: %s", statusCode, error, errorDescription));

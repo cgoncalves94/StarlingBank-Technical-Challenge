@@ -21,6 +21,7 @@ import com.starlingbank.service.AccountService;
 
 /**
  * This class is used to test the AccountService class.
+ * @author Cesar Goncalves
  */
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {

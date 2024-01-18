@@ -2,6 +2,7 @@ package com.starlingbank.model;
 
 /**
  * Represents a Transaction in the Starling Bank system.
+ * @author Cesar Goncalves
  */
 public class Transaction {
     // The amount in minor units (e.g., pence for GBP)

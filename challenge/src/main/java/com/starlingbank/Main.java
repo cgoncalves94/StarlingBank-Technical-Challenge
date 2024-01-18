@@ -15,6 +15,7 @@ import com.starlingbank.util.UserInputHandler;
 
 /**
  * Main class of the application.
+ * @author Cesar Goncalves
  */
 public final class Main {
 

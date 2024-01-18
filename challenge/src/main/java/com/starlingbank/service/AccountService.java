@@ -14,6 +14,7 @@ import com.starlingbank.model.Account;
 /**
  * This class provides services related to Account.
  * It uses StarlingClient to communicate with the Starling Bank API.
+ * @author Cesar Goncalves
  */
 public class AccountService {
     // StarlingClient instance for API communication

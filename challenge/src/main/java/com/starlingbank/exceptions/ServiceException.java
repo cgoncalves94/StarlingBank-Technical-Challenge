@@ -3,6 +3,7 @@ package com.starlingbank.exceptions;
 /**
  * This is a custom exception class for handling service errors.
  * It extends the RuntimeException class and provides additional details about the service error.
+ * @author Cesar Goncalves
  */
 public class ServiceException extends RuntimeException {
 

@@ -24,6 +24,7 @@ import com.starlingbank.service.SavingsGoalService;
 
 /**
  * This class tests the SavingsGoalService class.
+ * @author Cesar Goncalves
  */
 @ExtendWith(MockitoExtension.class)
 class SavingsGoalServiceTest {

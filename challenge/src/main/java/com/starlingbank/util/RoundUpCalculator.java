@@ -7,8 +7,8 @@ import com.starlingbank.model.Transaction;
 /**
  * The RoundUpCalculator class provides methods to calculate the round-up amount for transactions
  * and the total round-up amount for a list of transactions.
+ * @author Cesar Goncalves
  */
-
 public class RoundUpCalculator {
 
     private static final int MAX_PENCE = 100;

@@ -2,6 +2,7 @@ package com.starlingbank.model;
 
 /**
  * Represents an Account in the Starling Bank system.
+ * @author Cesar Goncalves
  */
 public class Account {
     // Unique identifier for the account

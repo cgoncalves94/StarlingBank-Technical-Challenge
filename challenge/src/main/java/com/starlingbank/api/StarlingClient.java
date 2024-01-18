@@ -21,6 +21,7 @@ import com.starlingbank.exceptions.ApiException;
  * This class is responsible for handling all the API calls to the Starling Bank.
  * It includes methods to get account details, transactions
  * savings goals, and also to create savings goals and add money to them.
+ * @author Cesar Goncalves
  */
 public class StarlingClient {
     private static final String APPLICATION_JSON = "application/json";

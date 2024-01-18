@@ -15,6 +15,7 @@ import com.starlingbank.model.Transaction;
 
 /**
  * This service class is responsible for handling transaction related operations.
+ * @author Cesar Goncalves
  */
 public class TransactionService {
     // Instance of StarlingClient for API communication

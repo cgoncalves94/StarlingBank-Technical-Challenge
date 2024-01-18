@@ -23,6 +23,7 @@ import com.starlingbank.util.UserInputHandler;
  * The ApplicationRunner class is responsible for running the application.
  * It fetches account details, gets start and end dates from the user, gets transactions between specific timestamps,
  * calculates the total round-up amount, and manages savings goals.
+ * @author Cesar Goncalves
  */
 public class ApplicationRunner {
     private static final int POUNDS_TO_MINOR_UNITS = 100;

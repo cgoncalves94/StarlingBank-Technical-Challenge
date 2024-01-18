@@ -20,6 +20,7 @@ import com.starlingbank.service.TransactionService;
 
 /**
  * This class is used to test the TransactionService class.
+ * @author Cesar Goncalves
  */
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {

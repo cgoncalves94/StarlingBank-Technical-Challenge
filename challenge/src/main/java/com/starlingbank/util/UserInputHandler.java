@@ -7,6 +7,7 @@ import java.util.Scanner;
 /**
  * The UserInputHandler class is responsible for handling user inputs.
  * It provides methods to read different types of inputs from the user.
+ * @author Cesar Goncalves
  */
 public class UserInputHandler {
     // Scanner object to read user input

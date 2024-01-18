@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 /**
  * This class is responsible for managing the configuration of the application.
  * It loads the properties from a configuration file and provides a method to access them.
+ * @author Cesar Goncalves
  */
 public class ConfigManager {
     // The name of the configuration file

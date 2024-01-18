@@ -13,6 +13,7 @@ import com.starlingbank.util.RoundUpCalculator;
 
 /**
  * This class is used to test the RoundUpCalculator class.
+ * @author Cesar Goncalves
  */
 class RoundUpCalculatorTest {
 
