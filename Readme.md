@@ -11,6 +11,14 @@ The project adheres to the separation of concerns principle and is organized int
 - `exceptions` - Custom exceptions for error handling.
 - `util` - Utility classes for common functionalities like rounding up calculations and user input handling.
 - `model` - Data models representing the core business objects.
+  
+## Dependencies
+
+The project uses Maven for managing dependencies. Key libraries include:
+
+- `httpclient` - For HTTP protocol support.
+- `junit-jupiter-api`, `mockito-core`, `assertj-core` - For unit testing and assertions.
+- `json` - For additional JSON handling capabilities.
 
 ## Main Classes
 
@@ -21,17 +29,23 @@ The project adheres to the separation of concerns principle and is organized int
 - `ApiException` and `ServiceException` - Defines exceptions for API and service layer errors.
 - `RoundUpCalculator` - Calculates the round-up amount from a list of transactions.
 - `UserInputHandler` - Provides methods for handling user input within the application.
-- `Account`, `Transaction`, `SavingGoal`, `Amount` - Representations of the respective domain entities. The `Amount` class typically encapsulates monetary values, handling currency and minor units.
+- `Account`, `Transaction`, `SavingGoal`, `Amount` - Representations of the respective domain entities. 
 - `ApplicationRunner` - Orchestrates the flow of the application logic.
 - `Main` - Entry point for the application, responsible for initializing and starting the application.
 
-## Dependencies
 
-The project uses Maven for managing dependencies. Key libraries include:
+## Test Classes
 
-- `httpclient` - For HTTP protocol support.
-- `junit-jupiter-api`, `mockito-core`, `assertj-core` - For unit testing and assertions.
-- `json` - For additional JSON handling capabilities.
+The project includes unit tests to verify the functionality of the main classes. The test classes are located in the src/test/java/com/starlingbank directory and follow the naming convention ClassNameTest.java. Key test classes include:
+
+- `AccountServiceTest` - Tests the functionality of the AccountService class.
+- `TransactionServiceTest` - Tests the functionality of the TransactionService class.
+- `SavingsGoalServiceTest` - Tests the functionality of the SavingsGoalService class.
+- `RoundUpCalculatorTest` - Tests the functionality of the RoundUpCalculator class.
+
+These tests use Mockito to mock the StarlingClient class, simulating the behavior of the Starling Bank API without making actual HTTP requests.
+
+To run the tests, use the following Maven command: `mvn test`
 
 ## Validate the Access Token
 - Go to the Starling Bank Developers Account and refresh/generate a new access token.

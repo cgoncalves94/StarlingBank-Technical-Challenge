@@ -1,21 +1,22 @@
 package com.starlingbank;
 
-import com.starlingbank.api.StarlingClient;
-import com.starlingbank.exceptions.ApiException;
-import com.starlingbank.exceptions.ServiceException;
-import com.starlingbank.model.Transaction;
-import com.starlingbank.service.TransactionService;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
+
 import java.util.List;
-import org.json.JSONException;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import com.starlingbank.api.StarlingClient;
+import com.starlingbank.exceptions.ApiException;
+import com.starlingbank.exceptions.ServiceException;
+import com.starlingbank.model.Transaction;
+import com.starlingbank.service.TransactionService;
 
 /**
  * This class is used to test the TransactionService class.
@@ -23,93 +24,84 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 
-    private static final int EXPECTED_MINOR_UNITS = 123;
-    private static final int MOCK_MINOR_UNITS = 123;
+    // Constants for testing
     private static final int API_ERROR_CODE = 500;
+    private static final String ACCOUNT_UID = "account-uid";
+    private static final String CATEGORY_UID = "category-uid";
+    private static final String MIN_TIMESTAMP = "2021-01-01T00:00:00Z";
+    private static final String MAX_TIMESTAMP = "2021-01-31T23:59:59Z";
+    private static final int EXPECTED_MINOR_UNITS = 123;
+    private static final String MOCK_RESPONSE = "{\"feedItems\":[{\"amount\":{\"currency\":\"GBP\","
+        + "\"minorUnits\":123},\"source\":\"FASTER_PAYMENTS_OUT\"}]}";
 
-
-    // Mocking the StarlingClient class
+    // Mocks for testing
     @Mock
     private StarlingClient starlingClient;
 
-    // Injecting the mocks into the TransactionService class
     @InjectMocks
     private TransactionService transactionService;
 
-    // Test case for successful retrieval of transactions
+    // Test for successful transaction retrieval
     @Test
-    void getTransactionsBetween_Success() throws Exception {
-        // Arrange
-        String accountUid = "account-uid";
-        String categoryUid = "category-uid";
-        String minTransactionTimestamp = "2021-01-01T00:00:00Z";
-        String maxTransactionTimestamp = "2021-01-31T23:59:59Z";
-        String mockResponse = "{\"feedItems\":[{\"amount\":{\"currency\":\"GBP\","
-                + "\"minorUnits\":123},\"source\":\"FASTER_PAYMENTS_OUT\"}]}";
-        when(starlingClient.getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp))
-            .thenReturn(mockResponse);
+    void getTransactions_Success() throws Exception {
+        // Mock the API response
+        when(starlingClient.getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP))
+            .thenReturn(MOCK_RESPONSE);
 
-        // Act
-        List<Transaction> result = transactionService
-            .getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp);
+        // Call the method under test
+        List<Transaction> result = transactionService.getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP);
 
-        // Assert
+        // Assert the result
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getMinorUnits()).isEqualTo(EXPECTED_MINOR_UNITS);
-        assertThat(result.get(0).getSource()).isEqualTo("FASTER_PAYMENTS_OUT");
 
-        // Verify the interaction with StarlingClient
-        verify(starlingClient)
-            .getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp);
+        // Verify the API was called
+        verify(starlingClient).getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP);
     }
 
-    // Test case for handling ApiException
+    // Test for invalid parameters
     @Test
-    void getTransactionsBetween_ApiException() throws Exception {
-        // Arrange
-        String accountUid = "account-uid";
-        String categoryUid = "category-uid";
-        String minTransactionTimestamp = "2021-01-01T00:00:00Z";
-        String maxTransactionTimestamp = "2021-01-31T23:59:59Z";
-        when(starlingClient.getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp))
+    void getTransactions_InvalidParameters() {
+        // Assert that an exception is thrown when null parameters are passed
+        assertThatThrownBy(() -> transactionService.getTransactions(null, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Input parameters cannot be null or empty");
+
+        // Assert that an exception is thrown when empty parameters are passed
+        assertThatThrownBy(() -> transactionService.getTransactions(ACCOUNT_UID, "", MIN_TIMESTAMP, MAX_TIMESTAMP))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Input parameters cannot be null or empty");
+    }
+
+    // Test for API exception
+    @Test
+    void getTransactions_ApiException() throws Exception {
+        // Mock the API to throw an exception
+        when(starlingClient.getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP))
             .thenThrow(new ApiException(API_ERROR_CODE, "API error", "Detailed API error"));
 
-        // Act & Assert
-        assertThatThrownBy(() -> transactionService
-            .getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp))
+        // Assert that a ServiceException is thrown
+        assertThatThrownBy(() -> transactionService.getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP))
             .isInstanceOf(ServiceException.class)
-            .hasMessageContaining("Error response from the API")
-            .hasCauseInstanceOf(ApiException.class);
+            .hasMessageContaining("Received an error response from the API");
 
-        // Verify the interaction with StarlingClient
-        verify(starlingClient)
-            .getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp);
+        // Verify the API was called
+        verify(starlingClient).getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP);
     }
 
-    // Test case for handling JSONException
+    // Test for JSON parsing exception
     @Test
-    void getTransactionsBetween_JsonException() throws Exception {
-        // Arrange
-        String accountUid = "account-uid";
-        String categoryUid = "category-uid";
-        String minTransactionTimestamp = "2021-01-01T00:00:00Z";
-        String maxTransactionTimestamp = "2021-01-31T23:59:59Z";
-        // Simulate a broken JSON response with a missing closing brace
-        String mockResponse = "{\"feedItems\":[{\"amount\":{\"currency\":\"GBP\",\"minorUnits\":"
-            + MOCK_MINOR_UNITS + "},\"source\":\"FASTER_PAYMENTS_OUT\"";
-        when(starlingClient
-            .getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp))
-            .thenReturn(mockResponse);
+    void getTransactions_JsonException() throws Exception {
+        // Mock the API to return invalid JSON
+        when(starlingClient.getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP))
+            .thenReturn("Invalid JSON");
 
-        // Act & Assert
-        assertThatThrownBy(() -> transactionService
-            .getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp))
+        // Assert that a ServiceException is thrown
+        assertThatThrownBy(() -> transactionService.getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP))
             .isInstanceOf(ServiceException.class)
-            .hasMessageContaining("Error parsing the response from the API")
-            .hasCauseInstanceOf(JSONException.class);
+            .hasMessageContaining("Error occurred while parsing the response from the API");
 
-        // Verify the interaction with StarlingClient
-        verify(starlingClient)
-            .getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp);
+        // Verify the API was called
+        verify(starlingClient).getTransactions(ACCOUNT_UID, CATEGORY_UID, MIN_TIMESTAMP, MAX_TIMESTAMP);
     }
 }

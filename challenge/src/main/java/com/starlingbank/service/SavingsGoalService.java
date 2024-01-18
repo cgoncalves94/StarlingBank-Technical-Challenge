@@ -1,17 +1,19 @@
 package com.starlingbank.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.starlingbank.api.StarlingClient;
 import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.exceptions.ServiceException;
 import com.starlingbank.model.Account;
 import com.starlingbank.model.Amount;
 import com.starlingbank.model.SavingGoal;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Service class for managing savings goals.

@@ -8,7 +8,6 @@ public class SavingGoal {
     private final String name;            // Name of the Saving Goal
     private final Amount target;          // Target Amount of the Saving Goal
 
-
     /**
      * Constructs a SavingGoal with the specified unique identifier, name, and target amount.
      *
@@ -16,7 +15,7 @@ public class SavingGoal {
      * @param name the name of the saving goal
      * @param target the target amount for the saving goal
      */
-    public SavingGoal( String savingsGoalUid, String name, Amount target) {
+    public SavingGoal(String savingsGoalUid, String name, Amount target) {
         this.savingsGoalUid = savingsGoalUid;
         this.name = name;
         this.target = target;

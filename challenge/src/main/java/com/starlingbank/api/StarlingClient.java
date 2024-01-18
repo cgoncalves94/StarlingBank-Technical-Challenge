@@ -1,9 +1,8 @@
 package com.starlingbank.api;
 
-// Importing necessary libraries for handling exceptions
-import com.starlingbank.exceptions.ApiException;
 import java.io.IOException;
 import java.util.UUID;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -14,6 +13,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+
+// Importing necessary libraries for handling exceptions
+import com.starlingbank.exceptions.ApiException;
 
 /**
  * This class is responsible for handling all the API calls to the Starling Bank.

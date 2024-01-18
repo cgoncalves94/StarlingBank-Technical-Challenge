@@ -1,13 +1,15 @@
 
 package com.starlingbank;
 
-import com.starlingbank.model.Transaction;
-import com.starlingbank.util.RoundUpCalculator;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.starlingbank.model.Transaction;
+import com.starlingbank.util.RoundUpCalculator;
 
 /**
  * This class is used to test the RoundUpCalculator class.

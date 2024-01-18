@@ -32,6 +32,12 @@ public class Amount {
     }
 
     // Formats the amount for display, e.g., "£10.00" or "€10.00"
+    /**
+     * Formats the amount for display.
+     *
+     * @param locale the locale to use for formatting.
+     * @return the formatted amount.
+     */
     public String format(Locale locale) {
         BigDecimal amount = toMajorUnits();
         Currency currency = Currency.getInstance(currencyCode);
@@ -39,14 +45,4 @@ public class Amount {
         format.setCurrency(currency);
         return format.format(amount);
     }
-
-    // Add arithmetic operations if needed, for example:
-    public Amount add(Amount other) {
-        if (!this.currencyCode.equals(other.currencyCode)) {
-            throw new IllegalArgumentException("Cannot add amounts with different currencies");
-        }
-        return new Amount(this.minorUnits + other.minorUnits, this.currencyCode);
-    }
-
-    // More operations like subtract, multiply could be added here
 }

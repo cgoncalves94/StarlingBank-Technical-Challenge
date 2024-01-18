@@ -1,5 +1,13 @@
 package com.starlingbank;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+
 import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.model.Account;
 import com.starlingbank.model.Amount;
@@ -10,13 +18,6 @@ import com.starlingbank.service.SavingsGoalService;
 import com.starlingbank.service.TransactionService;
 import com.starlingbank.util.RoundUpCalculator;
 import com.starlingbank.util.UserInputHandler;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * The ApplicationRunner class is responsible for running the application.
@@ -114,6 +115,7 @@ public class ApplicationRunner {
             Amount roundUpAmount = new Amount(totalRoundUpMinorUnits, "GBP");
             System.out.println("Total round-up amount to transfer: " + roundUpAmount.format(Locale.UK));
             savingsGoalService.addMoneyToSavingsGoal(account, targetSavingGoal, roundUpAmount);
+
         } else {
             System.out.println("No round-up amount to transfer.");
         }

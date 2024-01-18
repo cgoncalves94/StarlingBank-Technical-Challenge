@@ -12,13 +12,12 @@ public class ApiException extends Exception {
     // Detailed description of the API error
     private final String errorDescription;
 
-    
-
     /**
      * Constructor for the ApiException class.
      * It initializes the status code, error message, and error description of the API error.
-     * @param statusCode The status code of the API response.
-     * @param error The error message of the API response.
+     *
+     * @param statusCode       The status code of the API response.
+     * @param error            The error message of the API response.
      * @param errorDescription The detailed description of the API error.
      */
     public ApiException(int statusCode, String error, String errorDescription) {
@@ -31,6 +30,7 @@ public class ApiException extends Exception {
     /**
      * This method overrides the getMessage method of the Exception class.
      * It provides a custom message format for the API error.
+     *
      * @return A string representing the custom message format of the API error.
      */
     @Override

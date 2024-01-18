@@ -1,13 +1,15 @@
 package com.starlingbank.service;
 
+import java.io.IOException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.starlingbank.api.StarlingClient;
 import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.exceptions.ServiceException;
 import com.starlingbank.model.Account;
-import java.io.IOException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * This class provides services related to Account.

@@ -1,7 +1,8 @@
 package com.starlingbank.util;
 
-import com.starlingbank.model.Transaction;
 import java.util.List;
+
+import com.starlingbank.model.Transaction;
 
 /**
  * The RoundUpCalculator class provides methods to calculate the round-up amount for transactions
