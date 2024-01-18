@@ -2,6 +2,7 @@
 
 The RoundUp feature is a Java-based application designed to help users automatically round up transactions to the nearest pound and save the difference.
 
+
 ## Project Structure
 
 The project adheres to the separation of concerns principle and is organized into the following packages:
@@ -12,13 +13,6 @@ The project adheres to the separation of concerns principle and is organized int
 - `util` - Utility classes for common functionalities like rounding up calculations and user input handling.
 - `model` - Data models representing the core business objects.
   
-## Dependencies
-
-The project uses Maven for managing dependencies. Key libraries include:
-
-- `httpclient` - For HTTP protocol support.
-- `junit-jupiter-api`, `mockito-core`, `assertj-core` - For unit testing and assertions.
-- `json` - For additional JSON handling capabilities.
 
 ## Main Classes
 
@@ -47,8 +41,10 @@ These tests use Mockito to mock the StarlingClient class, simulating the behavio
 
 To run the tests, use the following Maven command: `mvn test`
 
+
 ## Validate the Access Token
 - Go to the Starling Bank Developers Account and refresh/generate a new access token.
+  
 
 ## Prerequisites
 
@@ -56,6 +52,16 @@ Ensure you have the following installed on your system:
 
 - Java 21 
 - Maven 3.6.3 
+  
+
+## Dependencies
+
+The project uses Maven for managing dependencies. Key libraries include:
+
+- `httpclient` - For HTTP protocol support.
+- `junit-jupiter-api`, `mockito-core`, `assertj-core` - For unit testing and assertions.
+- `json` - For additional JSON handling capabilities.
+  
 
 ## How to Run
 
@@ -70,6 +76,7 @@ Ensure you have Java and Maven installed on your system before proceeding.
 ## Author
 
 Cesar Goncalves
+
 
 ## Note
 
