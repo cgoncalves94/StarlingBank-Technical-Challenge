@@ -1,5 +1,9 @@
 package com.starlingbank;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 // Importing necessary classes and packages
 import com.starlingbank.api.StarlingClient;
 import com.starlingbank.config.ConfigManager;
@@ -9,11 +13,6 @@ import com.starlingbank.service.SavingsGoalService;
 import com.starlingbank.service.TransactionService;
 import com.starlingbank.util.RoundUpCalculator;
 import com.starlingbank.util.UserInputHandler;
-
-import java.io.IOException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 // Main class of the application
 public class Main {

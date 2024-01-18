@@ -1,16 +1,15 @@
 package com.starlingbank;
 
-import com.starlingbank.service.AccountService;
-import com.starlingbank.service.TransactionService;
-import com.starlingbank.service.SavingsGoalService;
-import com.starlingbank.util.RoundUpCalculator;
-import com.starlingbank.util.UserInputHandler;
 import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.model.Account;
 import com.starlingbank.model.Amount;
-import com.starlingbank.model.Transaction;
 import com.starlingbank.model.SavingGoal;
-
+import com.starlingbank.model.Transaction;
+import com.starlingbank.service.AccountService;
+import com.starlingbank.service.SavingsGoalService;
+import com.starlingbank.service.TransactionService;
+import com.starlingbank.util.RoundUpCalculator;
+import com.starlingbank.util.UserInputHandler;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -25,6 +24,8 @@ import java.util.Locale;
  * calculates the total round-up amount, and manages savings goals.
  */
 public class ApplicationRunner {
+    private static final int POUNDS_TO_MINOR_UNITS = 100;
+
     private final AccountService accountService;
     private final TransactionService transactionService;
     private final SavingsGoalService savingsGoalService;
@@ -35,7 +36,9 @@ public class ApplicationRunner {
      * Constructor for ApplicationRunner.
      * Initializes the services, calculator, and user input handler.
      */
-    public ApplicationRunner(AccountService accountService, TransactionService transactionService, SavingsGoalService savingsGoalService, RoundUpCalculator calculator, UserInputHandler userInputHandler) {
+    public ApplicationRunner(AccountService accountService, TransactionService transactionService,
+        SavingsGoalService savingsGoalService, RoundUpCalculator calculator, UserInputHandler userInputHandler) {
+
         this.accountService = accountService;
         this.transactionService = transactionService;
         this.savingsGoalService = savingsGoalService;
@@ -45,7 +48,8 @@ public class ApplicationRunner {
 
     /**
      * Runs the application.
-     * Fetches account details, gets start and end dates from the user, retrieves transactions between specific timestamps,
+     * Fetches account details, gets start and end dates from the user,
+     * retrieves transactions between specific timestamps,
      * calculates the total round-up amount, and manages savings goals.
      * @throws IOException if an I/O error occurs.
      * @throws ApiException if an API error occurs.
@@ -74,7 +78,8 @@ public class ApplicationRunner {
         String formattedEndDate = endDateTime.format(formatter);
 
         // Get transactions between specific timestamps
-        List<Transaction> transactions = transactionService.getTransactions(account.getAccountUid(), account.getCategoryUid(), formattedStartDate, formattedEndDate);
+        List<Transaction> transactions = transactionService.getTransactions(account.getAccountUid(),
+                                        account.getCategoryUid(), formattedStartDate, formattedEndDate);
 
         // Calculate the total round-up amount
         int totalRoundUpMinorUnits = calculator.calculateTotalRoundUp(transactions);
@@ -82,7 +87,6 @@ public class ApplicationRunner {
         // Manage savings goals
         manageSavingsGoals(account, totalRoundUpMinorUnits);
     }
-
 
     /**
      * Manages savings goals.
@@ -98,7 +102,8 @@ public class ApplicationRunner {
         if (savingsGoals.isEmpty()) {
             String goalName = userInputHandler.readString("Enter a name for your savings goal: ");
             double targetAmountPounds = userInputHandler.readDouble("Enter your target amount in pounds: ");
-            Amount targetAmount = new Amount((int) (targetAmountPounds * 100), "GBP"); // Assuming the currency is always GBP
+            Amount targetAmount = new Amount((int) (targetAmountPounds * POUNDS_TO_MINOR_UNITS),
+                                "GBP"); // Assuming the currency is always GBP
 
             targetSavingGoal = savingsGoalService.createSavingsGoal(account, goalName, targetAmount);
         } else {

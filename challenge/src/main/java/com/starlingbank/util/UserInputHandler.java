@@ -1,8 +1,8 @@
 package com.starlingbank.util;
 
-import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 
 /**
  * The UserInputHandler class is responsible for handling user inputs.

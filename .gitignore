@@ -1,5 +1,7 @@
 .idea/
 .vscode/
 target/
-challenge/dependency-reduced-pom.xml
 
+challenge/challenge.iml
+challenge/dependency-reduced-pom.xml
+checkstyle-checker.xml

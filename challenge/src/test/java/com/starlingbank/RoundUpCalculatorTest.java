@@ -1,15 +1,21 @@
 
 package com.starlingbank;
 
-import org.junit.jupiter.api.Test;
 import com.starlingbank.model.Transaction;
 import com.starlingbank.util.RoundUpCalculator;
 import java.util.Arrays;
 import java.util.List;
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-// This class is used to test the RoundUpCalculator class
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * This class is used to test the RoundUpCalculator class.
+ */
 class RoundUpCalculatorTest {
+
+    private static final int AMOUNT1 = 123;
+    private static final int AMOUNT2 = 456;
 
     // Instance of RoundUpCalculator to be tested
     private RoundUpCalculator calculator = new RoundUpCalculator();
@@ -19,17 +25,19 @@ class RoundUpCalculatorTest {
     void calculateTotalRoundUp() {
         // Arrange
         // Creating two transactions with "FASTER_PAYMENTS_OUT" source
-        Transaction t1 = new Transaction(123, "FASTER_PAYMENTS_OUT");
-        Transaction t2 = new Transaction(456, "FASTER_PAYMENTS_OUT");
+
+        final int expectedRoundUp = 121;
+        Transaction t1 = new Transaction(AMOUNT1, "FASTER_PAYMENTS_OUT");
+        Transaction t2 = new Transaction(AMOUNT2, "FASTER_PAYMENTS_OUT");
         List<Transaction> transactions = Arrays.asList(t1, t2);
-    
+
         // Act
         // Calculating the total round up from the list of transactions
         int result = calculator.calculateTotalRoundUp(transactions);
-    
+
         // Assert
         // The expected result is 121 (77 pence for t1 and 44 pence for t2)
-        assertThat(result).isEqualTo(121);
+        assertThat(result).isEqualTo(expectedRoundUp);
     }
 
     // Test case for calculating total round up from an empty list of transactions
@@ -38,11 +46,11 @@ class RoundUpCalculatorTest {
         // Arrange
         // Creating an empty list of transactions
         List<Transaction> transactions = Arrays.asList();
-    
+
         // Act
         // Calculating the total round up from the empty list of transactions
         int result = calculator.calculateTotalRoundUp(transactions);
-    
+
         // Assert
         // The expected result is 0 as there are no transactions
         assertThat(result).isZero();
@@ -53,14 +61,14 @@ class RoundUpCalculatorTest {
     void calculateTotalRoundUp_NotFasterPaymentOut() {
         // Arrange
         // Creating two transactions with "FASTER_PAYMENTS_IN" source
-        Transaction t1 = new Transaction(123, "FASTER_PAYMENTS_IN");
-        Transaction t2 = new Transaction(456, "FASTER_PAYMENTS_IN");
+        Transaction t1 = new Transaction(AMOUNT1, "FASTER_PAYMENTS_IN");
+        Transaction t2 = new Transaction(AMOUNT2, "FASTER_PAYMENTS_IN");
         List<Transaction> transactions = Arrays.asList(t1, t2);
-    
+
         // Act
         // Calculating the total round up from the list of transactions
         int result = calculator.calculateTotalRoundUp(transactions);
-    
+
         // Assert
         // The expected result is 0 as the transactions are not of "FASTER_PAYMENTS_OUT" source
         assertThat(result).isZero();

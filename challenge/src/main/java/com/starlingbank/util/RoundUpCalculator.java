@@ -7,7 +7,10 @@ import java.util.List;
  * The RoundUpCalculator class provides methods to calculate the round-up amount for transactions
  * and the total round-up amount for a list of transactions.
  */
+
 public class RoundUpCalculator {
+
+    private static final int MAX_PENCE = 100;
 
     /**
      * Calculates the round-up amount for a transaction.
@@ -17,8 +20,8 @@ public class RoundUpCalculator {
      */
     public int calculateRoundUpForTransaction(Transaction transaction) {
         int minorUnits = transaction.getMinorUnits();
-        int pence = minorUnits % 100;
-        return pence > 0 ? 100 - pence : 0;
+        int pence = minorUnits % MAX_PENCE;
+        return pence > 0 ? MAX_PENCE - pence : 0;
     }
 
     /**

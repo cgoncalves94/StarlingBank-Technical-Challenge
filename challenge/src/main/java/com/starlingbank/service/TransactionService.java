@@ -1,17 +1,15 @@
 package com.starlingbank.service;
 
 import com.starlingbank.api.StarlingClient;
-import com.starlingbank.model.Transaction;
 import com.starlingbank.exceptions.ApiException;
 import com.starlingbank.exceptions.ServiceException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.starlingbank.model.Transaction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Service class to handle transaction related operations.
@@ -37,13 +35,17 @@ public class TransactionService {
      * @return List of Transaction objects
      * @throws ServiceException if there is an error fetching transactions
      */
-    public List<Transaction> getTransactions(String accountUid, String categoryUid, String minTransactionTimestamp, String maxTransactionTimestamp) {
+    public List<Transaction> getTransactions(String accountUid, String categoryUid,
+            String minTransactionTimestamp, String maxTransactionTimestamp) {
         // Validate input parameters
-        if (accountUid == null || accountUid.isEmpty() || categoryUid == null || categoryUid.isEmpty() || minTransactionTimestamp == null || minTransactionTimestamp.isEmpty() || maxTransactionTimestamp == null || maxTransactionTimestamp.isEmpty()) {
+        if (accountUid == null || accountUid.isEmpty() || categoryUid == null || categoryUid.isEmpty()
+            || minTransactionTimestamp == null || minTransactionTimestamp.isEmpty() || maxTransactionTimestamp == null
+            || maxTransactionTimestamp.isEmpty()) {
             throw new IllegalArgumentException("Input parameters cannot be null or empty");
         }
         try {
-            String response = starlingClient.getTransactions(accountUid, categoryUid, minTransactionTimestamp, maxTransactionTimestamp);
+            String response = starlingClient.getTransactions(accountUid, categoryUid,
+                minTransactionTimestamp, maxTransactionTimestamp);
             JSONArray transactionsJson = new JSONObject(response).getJSONArray("feedItems");
             List<Transaction> transactions = new ArrayList<>();
             for (int i = 0; i < transactionsJson.length(); i++) {

@@ -1,29 +1,29 @@
 package com.starlingbank.api;
 
-// Importing necessary libraries
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+// Importing necessary libraries for handling exceptions
+import com.starlingbank.exceptions.ApiException;
+import java.io.IOException;
+import java.util.UUID;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-// Importing custom exception
-import com.starlingbank.exceptions.ApiException;
-
-// Importing necessary libraries for handling exceptions
-import java.io.IOException;
-import java.util.UUID;
-
 /**
  * This class is responsible for handling all the API calls to the Starling Bank.
- * It includes methods to get account details, transactions, savings goals, and also to create savings goals and add money to them.
+ * It includes methods to get account details, transactions
+ * savings goals, and also to create savings goals and add money to them.
  */
 public class StarlingClient {
+    private static final String APPLICATION_JSON = "application/json";
+    private static final int HTTP_STATUS_OK = 200;
+
     private final String baseUrl;
     private final CloseableHttpClient httpClient;
     private final String accessToken;
@@ -38,8 +38,6 @@ public class StarlingClient {
         this.httpClient = HttpClients.createDefault();
     }
 
-    private static final String APPLICATION_JSON = "application/json";
-
     /**
      * This method sends the HTTP request and returns the response.
      * @param request The HTTP request to be sent.
@@ -47,6 +45,7 @@ public class StarlingClient {
      * @throws IOException If an input or output exception occurred.
      * @throws ApiException If an API exception occurred.
      */
+
     private String sendRequest(HttpUriRequest request) throws IOException, ApiException {
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         request.setHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
@@ -54,7 +53,7 @@ public class StarlingClient {
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             int statusCode = response.getStatusLine().getStatusCode();
             String responseBody = EntityUtils.toString(response.getEntity());
-            if (statusCode == 200) {
+            if (statusCode == HTTP_STATUS_OK) {
                 return responseBody;
             } else {
                 handleErrorResponse(responseBody, statusCode);
@@ -94,7 +93,9 @@ public class StarlingClient {
      * @throws IOException If an input or output exception occurred.
      * @throws ApiException If an API exception occurred.
      */
-    public String getTransactions(String accountUid, String categoryUid, String minTransactionTimestamp, String maxTransactionTimestamp) throws IOException, ApiException {
+    public String getTransactions(String accountUid, String categoryUid,
+                                String minTransactionTimestamp, String maxTransactionTimestamp)
+                                throws IOException, ApiException {
         String url = baseUrl + "/api/v2/feed/account/" + accountUid + "/category/" + categoryUid
                 + "/transactions-between?minTransactionTimestamp=" + minTransactionTimestamp
                 + "&maxTransactionTimestamp=" + maxTransactionTimestamp;
@@ -124,7 +125,8 @@ public class StarlingClient {
      * @throws IOException If an input or output exception occurred.
      * @throws ApiException If an API exception occurred.
      */
-    public String createSavingsGoal(String accountUid, String name, String currency, int targetMinorUnits) throws IOException, ApiException {
+    public String createSavingsGoal(String accountUid, String name,
+                                    String currency, int targetMinorUnits) throws IOException, ApiException {
         HttpPut request = new HttpPut(baseUrl + "/api/v2/account/" + accountUid + "/savings-goals");
         JSONObject target = new JSONObject();
         target.put("currency", currency);
@@ -151,9 +153,13 @@ public class StarlingClient {
      * @throws IOException If an input or output exception occurred.
      * @throws ApiException If an API exception occurred.
      */
-    public void addMoneyToSavingsGoal(String accountUid, String savingsGoalUid, int amount, String currency) throws IOException, ApiException {
+    public void addMoneyToSavingsGoal(String accountUid, String savingsGoalUid,
+                                        int amount, String currency) throws IOException, ApiException {
         UUID transferUid = UUID.randomUUID();
-        String url = baseUrl + "/api/v2/account/" + accountUid + "/savings-goals/" + savingsGoalUid + "/add-money/" + transferUid;
+
+        String url = baseUrl + "/api/v2/account/" + accountUid + "/savings-goals/"
+                    + savingsGoalUid + "/add-money/" + transferUid;
+
         HttpPut request = new HttpPut(url);
         JSONObject amountJson = new JSONObject();
         amountJson.put("currency", currency);
