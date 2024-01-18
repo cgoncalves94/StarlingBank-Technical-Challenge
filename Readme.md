@@ -50,6 +50,13 @@ To run the tests, use the following Maven command: `mvn test`
 ## Validate the Access Token
 - Go to the Starling Bank Developers Account and refresh/generate a new access token.
 
+## Prerequisites
+
+Ensure you have the following installed on your system:
+
+- Java 21 
+- Maven 3.6.3 
+
 ## How to Run
 
 Ensure you have Java and Maven installed on your system before proceeding.
