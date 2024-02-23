@@ -76,6 +76,7 @@ public class StarlingClient {
     }
 
     /**
+     * GET /api/v2/accounts
      * This method gets the account details.
      * @return The account details as a string.
      * @throws IOException If an input or output exception occurred.
@@ -87,6 +88,7 @@ public class StarlingClient {
     }
 
     /**
+     * GET /api/v2/feed/account/{accountUid}/category/{categoryUid}/transactions-between
      * This method gets the transactions between two timestamps.
      * @param accountUid The unique identifier of the account.
      * @param categoryUid The unique identifier of the category.
@@ -107,6 +109,7 @@ public class StarlingClient {
     }
 
     /**
+     * GET /api/v2/account/{accountUid}/savings-goals
      * This method gets the savings goals of an account.
      * @param accountUid The unique identifier of the account.
      * @return The savings goals as a string.
@@ -119,6 +122,7 @@ public class StarlingClient {
     }
 
     /**
+     * PUT /api/v2/account/{accountUid}/savings-goals
      * This method creates a savings goal.
      * @param accountUid The unique identifier of the account.
      * @param name The name of the savings goal.
@@ -142,12 +146,13 @@ public class StarlingClient {
 
         StringEntity entity = new StringEntity(savingsGoalRequest.toString());
         request.setEntity(entity);
-        request.setHeader("Content-Type", "application/json");
+        request.setHeader("Content-Type", APPLICATION_JSON);
 
         return sendRequest(request);
     }
 
     /**
+     * PUT /api/v2/account/{accountUid}/savings-goals/{savingsGoalUid}/add-money/{transferUid}
      * This method adds money to a savings goal.
      * @param accountUid The unique identifier of the account.
      * @param savingsGoalUid The unique identifier of the savings goal.

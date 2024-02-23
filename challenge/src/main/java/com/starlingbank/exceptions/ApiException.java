@@ -3,6 +3,7 @@ package com.starlingbank.exceptions;
 /**
  * This is a custom exception class for handling API errors.
  * It extends the Exception class and provides additional details about the API error.
+ * @author Cesar Goncalves
  */
 public class ApiException extends Exception {
     // Status code of the API response
@@ -19,7 +20,6 @@ public class ApiException extends Exception {
      * @param statusCode       The status code of the API response.
      * @param error            The error message of the API response.
      * @param errorDescription The detailed description of the API error.
-     * @author Cesar Goncalves
      */
     public ApiException(int statusCode, String error, String errorDescription) {
         super(String.format("Status Code: %d, Error: %s, Description: %s", statusCode, error, errorDescription));
